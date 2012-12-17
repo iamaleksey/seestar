@@ -1,0 +1,9 @@
+@author Aleksey Yeschenko <aleksey@apache.org>
+
+@doc Erlang client for Apache Cassandra binary protocol
+
+<h2>Introduction</h2>
+
+<strong>seestar</strong> is the Erlang client for Cassandra 1.2+ binary protocol.
+
+@end
