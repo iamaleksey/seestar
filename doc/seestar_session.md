@@ -1,6 +1,6 @@
 
 
-#Module seestar_client#
+#Module seestar_session#
 * [Data Types](#types)
 * [Function Index](#index)
 * [Function Details](#functions)
@@ -35,14 +35,6 @@ __Behaviours:__ [`gen_server`](gen_server.md).
 
 
 <pre>connect_option() = <a href="gen_tcp.md#type-connect_option">gen_tcp:connect_option()</a> | {connect_timeout, timeout()}</pre>
-
-
-
-###<a name="type-consistency">consistency()</a>##
-
-
-
-<pre>consistency() = any | one | two | three | quorum | all | local_quorum | each_quorum</pre>
 
 
 
@@ -93,7 +85,7 @@ Equivalent to [`execute(Client, QueryID, Types, Values, one)`](#execute-5).<a na
 ###execute/5##
 
 
-<pre>execute(Client::pid(), QueryID::<a href="#type-query_id">query_id()</a>, Types::[<a href="seestar_cqltypes.md#type-type">seestar_cqltypes:type()</a>], Values::[<a href="seestar_cqltypes.md#type-value">seestar_cqltypes:value()</a>], Consistency::<a href="#type-consistency">consistency()</a>) -> {ok, Result::<a href="seestar_result.md#type-result">seestar_result:result()</a>} | {error, Error::<a href="seestar_error.md#type-error">seestar_error:error()</a>}</pre>
+<pre>execute(Client::pid(), QueryID::<a href="#type-query_id">query_id()</a>, Types::[<a href="seestar_cqltypes.md#type-type">seestar_cqltypes:type()</a>], Values::[<a href="seestar_cqltypes.md#type-value">seestar_cqltypes:value()</a>], Consistency::<a href="seestar.md#type-consistency">seestar:consistency()</a>) -> {ok, Result::<a href="seestar_result.md#type-result">seestar_result:result()</a>} | {error, Error::<a href="seestar_error.md#type-error">seestar_error:error()</a>}</pre>
 <br></br>
 
 
@@ -121,7 +113,7 @@ Equivalent to [`perform(Client, Query, one)`](#perform-3).<a name="perform-3"></
 ###perform/3##
 
 
-<pre>perform(Client::pid(), Query::<a href="#type-query">'query'()</a>, Consistency::<a href="#type-consistency">consistency()</a>) -> {ok, Result::<a href="seestar_result.md#type-result">seestar_result:result()</a>} | {error, Error::<a href="seestar_error.md#type-error">seestar_error:error()</a>}</pre>
+<pre>perform(Client::pid(), Query::<a href="#type-query">'query'()</a>, Consistency::<a href="seestar.md#type-consistency">seestar:consistency()</a>) -> {ok, Result::<a href="seestar_result.md#type-result">seestar_result:result()</a>} | {error, Error::<a href="seestar_error.md#type-error">seestar_error:error()</a>}</pre>
 <br></br>
 
 
@@ -132,7 +124,7 @@ Use [`seestar_result`](seestar_result.md) module functions to work with the resu
 ###perform_async/3##
 
 
-<pre>perform_async(Client::pid(), Query::<a href="#type-query">'query'()</a>, Consistency::<a href="#type-consistency">consistency()</a>) -> ok</pre>
+<pre>perform_async(Client::pid(), Query::<a href="#type-query">'query'()</a>, Consistency::<a href="seestar.md#type-consistency">seestar:consistency()</a>) -> ok</pre>
 <br></br>
 
 

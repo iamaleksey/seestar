@@ -17,9 +17,10 @@ Erlang client for Apache Cassandra binary protocol
 
 
 <table width="100%" border="0" summary="list of modules">
-<tr><td><a href="https://github.com/iamaleksey/seestar/blob/master/doc/seestar_client.md" class="module">seestar_client</a></td></tr>
+<tr><td><a href="https://github.com/iamaleksey/seestar/blob/master/doc/seestar.md" class="module">seestar</a></td></tr>
 <tr><td><a href="https://github.com/iamaleksey/seestar/blob/master/doc/seestar_cqltypes.md" class="module">seestar_cqltypes</a></td></tr>
 <tr><td><a href="https://github.com/iamaleksey/seestar/blob/master/doc/seestar_error.md" class="module">seestar_error</a></td></tr>
 <tr><td><a href="https://github.com/iamaleksey/seestar/blob/master/doc/seestar_event.md" class="module">seestar_event</a></td></tr>
-<tr><td><a href="https://github.com/iamaleksey/seestar/blob/master/doc/seestar_result.md" class="module">seestar_result</a></td></tr></table>
+<tr><td><a href="https://github.com/iamaleksey/seestar/blob/master/doc/seestar_result.md" class="module">seestar_result</a></td></tr>
+<tr><td><a href="https://github.com/iamaleksey/seestar/blob/master/doc/seestar_session.md" class="module">seestar_session</a></td></tr></table>
 

@@ -62,7 +62,7 @@ __abstract datatype__: `error()`
 ###consistency/1##
 
 
-<pre>consistency(Error::<a href="#type-error">error()</a>) -> <a href="seestar_client.md#type-consistency">seestar_client:consistency()</a></pre>
+<pre>consistency(Error::<a href="#type-error">error()</a>) -> <a href="seestar.md#type-consistency">seestar:consistency()</a></pre>
 <br></br>
 
 

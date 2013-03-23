@@ -1,4 +1,0 @@
-{application,seestar}.
-{packages,[]}.
-{modules,[seestar_client,seestar_cqltypes,seestar_error,seestar_event,
-          seestar_result]}.
