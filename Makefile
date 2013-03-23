@@ -1,4 +1,4 @@
-.PHONY: all compile clean doc
+.PHONY: all compile clean doc check_plt build_plt clean_plt dialyze
 
 all: deps compile doc
 
@@ -13,3 +13,19 @@ clean:
 
 doc:
 	@./rebar skip_deps=true doc
+
+APPS = asn1 compiler crypto edoc erts eunit gs hipe inets kernel mnesia \
+	public_key runtime_tools ssl stdlib syntax_tools xmerl
+PLT = .seestar_plt
+
+check_plt: compile
+	dialyzer --check_plt --plt $(PLT) --apps $(APPS) deps/*/ebin
+
+build_plt: compile
+	dialyzer --build_plt --output_plt $(PLT) --apps $(APPS) deps/*/ebin
+
+clean_plt:
+	rm $(PLT)
+
+dialyze: compile
+	dialyzer -Wno_return --plt $(PLT) ebin
