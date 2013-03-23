@@ -21,15 +21,15 @@
 -opaque topology_change_event() :: #topology_change{}.
 -opaque status_change_event() :: #status_change{}.
 -opaque schema_change_event() :: #schema_change{}.
--opaque event() :: topology_change_event()
-                 | status_change_event()
-                 | schema_change_event().
+-type event() :: topology_change_event()
+               | status_change_event()
+               | schema_change_event().
 -export_type([event/0]).
 
 -type type() :: topology_change | status_change | schema_change.
 -type topology_change() :: new_node | removed_node.
 -type status_change() :: up | down.
--type schema_change() :: created | unpdated | dropped.
+-type schema_change() :: created | updated | dropped.
 
 %% -------------------------------------------------------------------------
 %% API

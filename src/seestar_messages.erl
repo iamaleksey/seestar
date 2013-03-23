@@ -157,7 +157,7 @@ decode_write_timeout(Data) ->
     #write_timeout{consistency = Consistency,
                    received = Received,
                    required = Required,
-                   write_type = list_to_atom(string:to_lower(WriteType))}.
+                   write_type = list_to_atom(string:to_lower(binary_to_list(WriteType)))}.
 
 decode_read_timeout(Data) ->
     {Consistency, Rest0} = seestar_types:decode_consistency(Data),

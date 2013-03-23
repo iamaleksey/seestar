@@ -223,7 +223,7 @@ encode_map(KeyType, ValueType, Dict) ->
 %% -------------------------------------------------------------------------
 
 %% @private
--spec decode_type(binary()) -> type().
+-spec decode_type(binary()) -> {type(), binary()}.
 decode_type(Data) ->
     {Code, Rest0} = seestar_types:decode_short(Data),
     case Code of

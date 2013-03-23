@@ -28,7 +28,7 @@
                 | set_keyspace_result()
                 | prepared_result()
                 | schema_change_result().
--export_type([result/0]).
+-export_type([result/0, prepared_result/0]).
 
 -type type() :: void | rows | set_keyspace | prepared | schema_change.
 -type change() :: created | updated | dropped.

@@ -18,7 +18,7 @@
 
 
 
-__abstract datatype__: `event()`
+<pre>event() = <a href="#type-topology_change_event">topology_change_event()</a> | <a href="#type-status_change_event">status_change_event()</a> | <a href="#type-schema_change_event">schema_change_event()</a></pre>
 
 
 
@@ -26,7 +26,7 @@ __abstract datatype__: `event()`
 
 
 
-<pre>schema_change() = created | unpdated | dropped</pre>
+<pre>schema_change() = created | updated | dropped</pre>
 
 
 
