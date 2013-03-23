@@ -1,4 +1,4 @@
-.PHONY: all compile clean doc check_plt build_plt clean_plt dialyze
+.PHONY: all compile clean doc check_plt build_plt clean_plt dialyze xref
 
 all: deps compile doc
 
@@ -29,3 +29,6 @@ clean_plt:
 
 dialyze: compile
 	dialyzer -Wno_return --plt $(PLT) ebin
+
+xref:
+	@./rebar skip_deps=true xref

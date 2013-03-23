@@ -5,5 +5,4 @@
 - add snappy support (if installed)
 - add events support
 - examples
-- fix? xref
 - native multi-pooling with app supervisor and app.config?
