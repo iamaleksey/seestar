@@ -36,7 +36,7 @@ code(#error{code = Code}) ->
 message(#error{message = Message}) ->
     Message.
 
--spec consistency(Error :: error()) -> seestar_client:consistency().
+-spec consistency(Error :: error()) -> seestar:consistency().
 consistency(#error{details = #unavailable{consistency = Consistency}}) ->
     Consistency;
 consistency(#error{details = #write_timeout{consistency = Consistency}}) ->

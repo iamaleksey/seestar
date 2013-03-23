@@ -12,7 +12,7 @@
 %%% See the License for the specific language governing permissions and
 %%% limitations under the License.
 
--module(seestar_client).
+-module(seestar_session).
 
 -behaviour(gen_server).
 
@@ -36,7 +36,6 @@
 -type connect_option() :: gen_tcp:connect_option() | {connect_timeout, timeout()}.
 
 -type 'query'() :: binary() | string().
--type consistency() :: any | one | two | three | quorum | all | local_quorum | each_quorum.
 -type query_id() :: binary().
 
 -define(b2l(Term), case is_binary(Term) of true -> binary_to_list(Term); false -> Term end).
@@ -153,7 +152,7 @@ perform(Client, Query) ->
 %% @doc Synchoronously perform a CQL query using the specified consistency level.
 %% Returns a result of an appropriate type (void, rows, set_keyspace, schema_change).
 %% Use {@link seestar_result} module functions to work with the result.
--spec perform(pid(), 'query'(), consistency()) ->
+-spec perform(pid(), 'query'(), seestar:consistency()) ->
     {ok, Result :: seestar_result:result()} | {error, Error :: seestar_error:error()}.
 perform(Client, Query, Consistency) ->
     case request(Client, #'query'{'query' = ?l2b(Query), consistency = Consistency}, true) of
@@ -165,7 +164,7 @@ perform(Client, Query, Consistency) ->
 
 %% TODO doc
 %% @doc Asynchronously perform a CQL query using the specified consistency level.
--spec perform_async(pid(), 'query'(), consistency()) -> ok.
+-spec perform_async(pid(), 'query'(), seestar:consistency()) -> ok.
 perform_async(Client, Query, Consistency) ->
     Req = #'query'{'query' = ?l2b(Query), consistency = Consistency},
     request(Client, Req, false).
@@ -194,7 +193,10 @@ execute(Client, QueryID, Types, Values) ->
 %% Use {@link seestar_result} module functions to work with the result.
 %% @see prepare/2.
 %% @see perform/3.
--spec execute(pid(), query_id(), [seestar_cqltypes:type()], [seestar_cqltypes:value()], consistency()) ->
+-spec execute(pid(),
+              query_id(),
+              [seestar_cqltypes:type()], [seestar_cqltypes:value()],
+              seestar:consistency()) ->
         {ok, Result :: seestar_result:result()} | {error, Error :: seestar_error:error()}.
 execute(Client, QueryID, Types, Values, Consistency) ->
     Req = #execute{id = QueryID, types = Types, values = Values, consistency = Consistency},
