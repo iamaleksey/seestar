@@ -2,3 +2,4 @@ ebin
 deps
 doc/edoc-info
 .seestar_plt
+.eunit

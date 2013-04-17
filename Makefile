@@ -1,4 +1,4 @@
-.PHONY: all compile clean doc check_plt build_plt clean_plt dialyze xref
+.PHONY: all compile clean doc check_plt build_plt clean_plt dialyze xref test
 
 all: deps compile doc
 
@@ -32,3 +32,6 @@ dialyze: compile
 
 xref:
 	@./rebar skip_deps=true xref
+
+test:
+	@./rebar skip_deps=true eunit
