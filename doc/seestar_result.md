@@ -26,7 +26,7 @@
 
 
 
-__abstract datatype__: `prepared_result()`
+<pre>prepared_result() = #prepared{}</pre>
 
 
 
@@ -34,7 +34,7 @@ __abstract datatype__: `prepared_result()`
 
 
 
-<pre>result() = void | <a href="#type-rows_result">rows_result()</a> | <a href="#type-set_keyspace_result">set_keyspace_result()</a> | <a href="#type-prepared_result">prepared_result()</a> | <a href="#type-schema_change_result">schema_change_result()</a></pre>
+__abstract datatype__: `result()`
 
 
 
@@ -42,7 +42,7 @@ __abstract datatype__: `prepared_result()`
 
 
 
-__abstract datatype__: `rows_result()`
+<pre>rows_result() = #rows{}</pre>
 
 
 
@@ -50,7 +50,7 @@ __abstract datatype__: `rows_result()`
 
 
 
-__abstract datatype__: `schema_change_result()`
+<pre>schema_change_result() = #schema_change{}</pre>
 
 
 
@@ -58,7 +58,7 @@ __abstract datatype__: `schema_change_result()`
 
 
 
-__abstract datatype__: `set_keyspace_result()`
+<pre>set_keyspace_result() = #set_keyspace{}</pre>
 
 
 

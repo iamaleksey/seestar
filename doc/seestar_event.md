@@ -18,7 +18,7 @@
 
 
 
-<pre>event() = <a href="#type-topology_change_event">topology_change_event()</a> | <a href="#type-status_change_event">status_change_event()</a> | <a href="#type-schema_change_event">schema_change_event()</a></pre>
+__abstract datatype__: `event()`
 
 
 
@@ -34,7 +34,7 @@
 
 
 
-__abstract datatype__: `schema_change_event()`
+<pre>schema_change_event() = #schema_change{}</pre>
 
 
 
@@ -50,7 +50,7 @@ __abstract datatype__: `schema_change_event()`
 
 
 
-__abstract datatype__: `status_change_event()`
+<pre>status_change_event() = #status_change{}</pre>
 
 
 
@@ -66,7 +66,7 @@ __abstract datatype__: `status_change_event()`
 
 
 
-__abstract datatype__: `topology_change_event()`
+<pre>topology_change_event() = #topology_change{}</pre>
 
 
 
