@@ -29,7 +29,7 @@
                 flags = [] :: [flag()],
                 opcode :: opcode(),
                 body :: binary()}).
--opaque frame() :: #frame{}.
+-type frame() :: #frame{}.
 
 %% -------------------------------------------------------------------------
 %% API

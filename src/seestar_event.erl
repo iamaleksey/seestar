@@ -18,12 +18,12 @@
 
 -export([type/1, change/1, ip/1, port/1, keyspace/1, table/1]).
 
--opaque topology_change_event() :: #topology_change{}.
--opaque status_change_event() :: #status_change{}.
--opaque schema_change_event() :: #schema_change{}.
--type event() :: topology_change_event()
-               | status_change_event()
-               | schema_change_event().
+-type topology_change_event() :: #topology_change{}.
+-type status_change_event() :: #status_change{}.
+-type schema_change_event() :: #schema_change{}.
+-opaque event() :: topology_change_event()
+                 | status_change_event()
+                 | schema_change_event().
 -export_type([event/0]).
 
 -type type() :: topology_change | status_change | schema_change.

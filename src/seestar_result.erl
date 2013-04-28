@@ -19,11 +19,11 @@
 -export([type/1, rows/1, names/1, types/1, type/2, keyspace/1, table/1, query_id/1,
          change/1]).
 
--opaque rows_result() :: #rows{}.
--opaque set_keyspace_result() :: #set_keyspace{}.
--opaque prepared_result() :: #prepared{}.
--opaque schema_change_result() :: #schema_change{}.
--type result() :: void
+-type rows_result() :: #rows{}.
+-type set_keyspace_result() :: #set_keyspace{}.
+-type prepared_result() :: #prepared{}.
+-type schema_change_result() :: #schema_change{}.
+-opaque result() :: void
                 | rows_result()
                 | set_keyspace_result()
                 | prepared_result()
