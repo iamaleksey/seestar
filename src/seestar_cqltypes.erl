@@ -253,7 +253,7 @@ code_to_type(16#06) -> decimal;
 code_to_type(16#07) -> double;
 code_to_type(16#08) -> float;
 code_to_type(16#09) -> int;
-code_to_type(16#0A) -> text;
+code_to_type(16#0A) -> text; % never actually occurs.
 code_to_type(16#0B) -> timestamp;
 code_to_type(16#0C) -> uuid;
 code_to_type(16#0D) -> varchar;
