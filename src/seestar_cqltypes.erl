@@ -119,7 +119,7 @@ decode_map(KeyType, ValueType, Size, Data, Dict) ->
     {ValueBytes, Rest1} = seestar_types:decode_short_bytes(Rest0),
     Key = decode_value(KeyType, KeyBytes),
     Value = decode_value(ValueType, ValueBytes),
-    decode_map(KeyType, ValueType, Size - 1, Rest1, dict:append(Key, Value, Dict)).
+    decode_map(KeyType, ValueType, Size - 1, Rest1, dict:store(Key, Value, Dict)).
 
 decode_set(Type, Data) ->
     {Size, Rest} = seestar_types:decode_short(Data),
