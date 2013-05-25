@@ -64,23 +64,14 @@ __Behaviours:__ [`gen_server`](gen_server.md).
 ##Function Index##
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#execute-4">execute/4</a></td><td>Equivalent to <a href="#execute-5"><tt>execute(Client, QueryID, Types, Values, one)</tt></a>.</td></tr><tr><td valign="top"><a href="#execute-5">execute/5</a></td><td>Synchronously execute a prepared query using the specified consistency level.</td></tr><tr><td valign="top"><a href="#execute_async-5">execute_async/5</a></td><td></td></tr><tr><td valign="top"><a href="#perform-2">perform/2</a></td><td>Equivalent to <a href="#perform-3"><tt>perform(Client, Query, one)</tt></a>.</td></tr><tr><td valign="top"><a href="#perform-3">perform/3</a></td><td>Synchoronously perform a CQL query using the specified consistency level.</td></tr><tr><td valign="top"><a href="#perform_async-3">perform_async/3</a></td><td>Asynchronously perform a CQL query using the specified consistency level.</td></tr><tr><td valign="top"><a href="#prepare-2">prepare/2</a></td><td>Prepare a query for later execution.</td></tr><tr><td valign="top"><a href="#start_link-2">start_link/2</a></td><td>Equivalent to <a href="#start_link-3"><tt>start_link(Host, Post, [])</tt></a>.</td></tr><tr><td valign="top"><a href="#start_link-3">start_link/3</a></td><td>Equivalent to <a href="#start_link-4"><tt>start_link(Host, Post, ClientOptions, [])</tt></a>.</td></tr><tr><td valign="top"><a href="#start_link-4">start_link/4</a></td><td></td></tr><tr><td valign="top"><a href="#stop-1">stop/1</a></td><td>Stop the client.</td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#execute-5">execute/5</a></td><td>Synchronously execute a prepared query using the specified consistency level.</td></tr><tr><td valign="top"><a href="#execute_async-5">execute_async/5</a></td><td></td></tr><tr><td valign="top"><a href="#perform-3">perform/3</a></td><td>Synchoronously perform a CQL query using the specified consistency level.</td></tr><tr><td valign="top"><a href="#perform_async-3">perform_async/3</a></td><td>Asynchronously perform a CQL query using the specified consistency level.</td></tr><tr><td valign="top"><a href="#prepare-2">prepare/2</a></td><td>Prepare a query for later execution.</td></tr><tr><td valign="top"><a href="#start_link-2">start_link/2</a></td><td>Equivalent to <a href="#start_link-3"><tt>start_link(Host, Post, [])</tt></a>.</td></tr><tr><td valign="top"><a href="#start_link-3">start_link/3</a></td><td>Equivalent to <a href="#start_link-4"><tt>start_link(Host, Post, ClientOptions, [])</tt></a>.</td></tr><tr><td valign="top"><a href="#start_link-4">start_link/4</a></td><td></td></tr><tr><td valign="top"><a href="#stop-1">stop/1</a></td><td>Stop the client.</td></tr></table>
 
 
 <a name="functions"></a>
 
 ##Function Details##
 
-<a name="execute-4"></a>
-
-###execute/4##
-
-
-<pre>execute(Client::pid(), QueryID::<a href="#type-query_id">query_id()</a>, Types::[<a href="seestar_cqltypes.md#type-type">seestar_cqltypes:type()</a>], Values::[<a href="seestar_cqltypes.md#type-value">seestar_cqltypes:value()</a>]) -> {ok, Result::<a href="seestar_result.md#type-result">seestar_result:result()</a>} | {error, Error::<a href="seestar_error.md#type-error">seestar_error:error()</a>}</pre>
-<br></br>
-
-
-Equivalent to [`execute(Client, QueryID, Types, Values, one)`](#execute-5).<a name="execute-5"></a>
+<a name="execute-5"></a>
 
 ###execute/5##
 
@@ -99,16 +90,7 @@ __See also:__ [perform/3](#perform-3), [prepare/2](#prepare-2).<a name="execute_
 
 `execute_async(Client, QueryID, Types, Values, Consistency) -> any()`
 
-<a name="perform-2"></a>
-
-###perform/2##
-
-
-<pre>perform(Client::pid(), Query::<a href="#type-query">'query'()</a>) -> {ok, Result::<a href="seestar_result.md#type-result">seestar_result:result()</a>} | {error, Error::<a href="seestar_error.md#type-error">seestar_error:error()</a>}</pre>
-<br></br>
-
-
-Equivalent to [`perform(Client, Query, one)`](#perform-3).<a name="perform-3"></a>
+<a name="perform-3"></a>
 
 ###perform/3##
 

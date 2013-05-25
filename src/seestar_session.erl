@@ -20,8 +20,8 @@
 
 %% API exports.
 -export([start_link/2, start_link/3, start_link/4, stop/1]).
--export([perform/2, perform/3, perform_async/3]).
--export([prepare/2, execute/4, execute/5, execute_async/5]).
+-export([perform/3, perform_async/3]).
+-export([prepare/2, execute/5, execute_async/5]).
 
 %% gen_server exports.
 -export([init/1, terminate/2, handle_call/3, handle_cast/2, handle_info/2,
@@ -120,7 +120,7 @@ set_keyspace(Pid, Options) ->
         undefined ->
             true;
         Keyspace ->
-            case perform(Pid, "USE " ++ ?b2l(Keyspace)) of
+            case perform(Pid, "USE " ++ ?b2l(Keyspace), one) of
                 {ok, _Result}    -> true;
                 {error, _Reason} -> false
             end
@@ -142,12 +142,6 @@ subscribe(Pid, Options) ->
 -spec stop(pid()) -> ok.
 stop(Client) ->
     gen_server:cast(Client, stop).
-
-%% @equiv perform(Client, Query, one)
--spec perform(pid(), 'query'()) ->
-    {ok, Result :: seestar_result:result()} | {error, Error :: seestar_error:error()}.
-perform(Client, Query) ->
-    perform(Client, Query, one).
 
 %% @doc Synchoronously perform a CQL query using the specified consistency level.
 %% Returns a result of an appropriate type (void, rows, set_keyspace, schema_change).
@@ -182,12 +176,6 @@ prepare(Client, Query) ->
         #error{} = Error ->
             {error, Error}
     end.
-
-%% @equiv execute(Client, QueryID, Types, Values, one)
--spec execute(pid(), query_id(), [seestar_cqltypes:type()], [seestar_cqltypes:value()]) ->
-        {ok, Result :: seestar_result:result()} | {error, Error :: seestar_error:error()}.
-execute(Client, QueryID, Types, Values) ->
-    execute(Client, QueryID, Types, Values, one).
 
 %% @doc Synchronously execute a prepared query using the specified consistency level.
 %% Use {@link seestar_result} module functions to work with the result.

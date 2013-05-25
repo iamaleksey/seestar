@@ -25,28 +25,28 @@ session_test_() ->
 test_schema_queries(Pid) ->
     Qry0 = "CREATE KEYSPACE seestar "
            "WITH REPLICATION = {'class': 'SimpleStrategy', 'replication_factor': 1}",
-    {ok, Res0} = seestar_session:perform(Pid, Qry0),
+    {ok, Res0} = seestar_session:perform(Pid, Qry0, one),
     ?assertEqual(schema_change, seestar_result:type(Res0)),
     ?assertEqual(<<"seestar">>, seestar_result:keyspace(Res0)),
     ?assertEqual(undefined, seestar_result:table(Res0)),
 
-    {error, Err0} = seestar_session:perform(Pid, Qry0),
+    {error, Err0} = seestar_session:perform(Pid, Qry0, one),
     ?assertEqual(?ALREADY_EXISTS, seestar_error:code(Err0)),
     ?assertEqual(<<"seestar">>, seestar_error:keyspace(Err0)),
     ?assertEqual(undefined, seestar_error:table(Err0)),
 
     Qry1 = "USE seestar",
-    {ok, Res1} = seestar_session:perform(Pid, Qry1),
+    {ok, Res1} = seestar_session:perform(Pid, Qry1, one),
     ?assertEqual(set_keyspace, seestar_result:type(Res1)),
     ?assertEqual(<<"seestar">>, seestar_result:keyspace(Res1)),
 
     Qry2 = "CREATE TABLE seestar_test_table (id int primary key, value text)",
-    {ok, Res2} = seestar_session:perform(Pid, Qry2),
+    {ok, Res2} = seestar_session:perform(Pid, Qry2, one),
     ?assertEqual(schema_change, seestar_result:type(Res2)),
     ?assertEqual(<<"seestar">>, seestar_result:keyspace(Res2)),
     ?assertEqual(<<"seestar_test_table">>, seestar_result:table(Res2)),
 
-    {error, Err1} = seestar_session:perform(Pid, Qry2),
+    {error, Err1} = seestar_session:perform(Pid, Qry2, one),
     ?assertEqual(?ALREADY_EXISTS, seestar_error:code(Err1)),
     ?assertEqual(<<"seestar">>, seestar_error:keyspace(Err1)),
     ?assertEqual(<<"seestar_test_table">>, seestar_error:table(Err1)).
@@ -71,7 +71,7 @@ test_native_types(Pid) ->
                 varintcol varint,
                 PRIMARY KEY(asciicol)
             )",
-    {ok, _} = seestar_session:perform(Pid, Qry0),
+    {ok, _} = seestar_session:perform(Pid, Qry0, one),
     % test serialization.
     Qry1 = "INSERT INTO seestar.has_all_types (
                asciicol, bigintcol, blobcol, booleancol, decimalcol, doublecol, floatcol,
@@ -93,27 +93,27 @@ test_native_types(Pid) ->
             <<135,99,103,104,40,81,17,187,181,58,96,197,71,12,191,14>>,
             <<148,125,144,228,220,27,68,12,148,158,178,154,25,169,42,113>>,
             <<>>, 100000000000000000000000000],
-    {ok, _} = seestar_session:execute(Pid, QryID, Types, Row0),
-    {ok, _} = seestar_session:execute(Pid, QryID, Types, Row1),
+    {ok, _} = seestar_session:execute(Pid, QryID, Types, Row0, one),
+    {ok, _} = seestar_session:execute(Pid, QryID, Types, Row1, one),
     % test deserialization.
     Qry2 = "SELECT asciicol, bigintcol, blobcol, booleancol, decimalcol, doublecol, floatcol,
                    inetcol, intcol, textcol, timestampcol, timeuuidcol, uuidcol, varcharcol, varintcol
             FROM seestar.has_all_types",
-    {ok, Res2} = seestar_session:perform(Pid, Qry2),
+    {ok, Res2} = seestar_session:perform(Pid, Qry2, one),
     ?assertEqual(Types, seestar_result:types(Res2)),
     ?assertEqual([Row0, Row1], seestar_result:rows(Res2)).
 
 test_counter_type(Pid) ->
     create_keyspace(Pid, "seestar", 1),
     Qry0 = "CREATE TABLE seestar.has_counter_type (id int PRIMARY KEY, counter counter)",
-    {ok, _} = seestar_session:perform(Pid, Qry0),
+    {ok, _} = seestar_session:perform(Pid, Qry0, one),
     Qry1 = "UPDATE seestar.has_counter_type SET counter = counter + ? WHERE id = ?",
     {ok, Res1} = seestar_session:prepare(Pid, Qry1),
     QryID = seestar_result:query_id(Res1),
     Types = seestar_result:types(Res1),
-    [ {ok, _} = seestar_session:execute(Pid, QryID, Types, [C, 0]) || C <- [ 1, -2, 3 ] ],
+    [ {ok, _} = seestar_session:execute(Pid, QryID, Types, [C, 0], one) || C <- [ 1, -2, 3 ] ],
     Qry2 = "SELECT id, counter FROM seestar.has_counter_type WHERE id = 0",
-    {ok, Res2} = seestar_session:perform(Pid, Qry2),
+    {ok, Res2} = seestar_session:perform(Pid, Qry2, one),
     ?assertEqual([[0, 2]], seestar_result:rows(Res2)).
 
 test_collection_types(Pid) ->
@@ -125,7 +125,7 @@ test_collection_types(Pid) ->
                 listcol list<boolean>,
                 PRIMARY KEY(id)
             )",
-    {ok, _} = seestar_session:perform(Pid, Qry0),
+    {ok, _} = seestar_session:perform(Pid, Qry0, one),
     Qry1 = "INSERT INTO seestar.has_collection_types (id, mapcol, setcol, listcol) VALUES (?, ?, ?, ?)",
     {ok, Res1} = seestar_session:prepare(Pid, Qry1),
     QryID = seestar_result:query_id(Res1),
@@ -133,11 +133,11 @@ test_collection_types(Pid) ->
     Row0 = [0, null, null, null],
     Row1 = [1, dict:from_list([{<<"k1">>, <<"v1">>}]), sets:from_list([1]), [true]],
     Row2 = [2, dict:from_list([{<<"k1">>, <<"v1">>}, {<<"k2">>, <<"v2">>}]), sets:from_list([1,2]), [true, false]],
-    [ {ok, _} = seestar_session:execute(Pid, QryID, Types, R) || R <- [Row0, Row1, Row2] ],
+    [ {ok, _} = seestar_session:execute(Pid, QryID, Types, R, one) || R <- [Row0, Row1, Row2] ],
     Qry2 = "SELECT id, mapcol, setcol, listcol FROM seestar.has_collection_types",
-    {ok, Res2} = seestar_session:perform(Pid, Qry2),
+    {ok, Res2} = seestar_session:perform(Pid, Qry2, one),
     ?assertEqual([Row1, Row0, Row2], seestar_result:rows(Res2)).
 
 create_keyspace(Pid, Name, RF) ->
     Qry = "CREATE KEYSPACE ~s WITH REPLICATION = {'class': 'SimpleStrategy', 'replication_factor': ~w}",
-    {ok, _} = seestar_session:perform(Pid, lists:flatten(io_lib:format(Qry, [Name, RF]))).
+    {ok, _} = seestar_session:perform(Pid, lists:flatten(io_lib:format(Qry, [Name, RF])), one).
