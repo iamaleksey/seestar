@@ -1,19 +1,23 @@
 
 
-#Module seestar#
+# Module seestar #
 * [Data Types](#types)
 
 
 
 <a name="types"></a>
 
-##Data Types##
+## Data Types ##
 
 
 
 
-###<a name="type-consistency">consistency()</a>##
+### <a name="type-consistency">consistency()</a> ###
 
 
 
-<pre>consistency() = any | one | two | three | quorum | all | local_quorum | each_quorum</pre>
+<pre><code>
+consistency() = any | one | two | three | quorum | all | local_quorum | each_quorum
+</code></pre>
+
+

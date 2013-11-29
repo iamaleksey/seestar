@@ -1,36 +1,40 @@
 
 
-#The seestar application#
-
+# The seestar application #
 
 __Authors:__ Aleksey Yeschenko ([`aleksey@apache.org`](mailto:aleksey@apache.org)).
 
 Erlang client for Apache Cassandra binary protocol
 
-##Introduction##
 
+## Introduction ##
 
 
 <strong>seestar</strong>
  is the Erlang client for Cassandra 1.2+ binary protocol.
 
-##Tests##
 
+## Tests ##
 
 You'll need to install [ccm](https://github.com/pcmanus/ccm).
-To run the tests, execute:<pre>
+To run the tests, execute:
+
+```
+
 CASSANDRA_DIR=~/path/to/cassandra make test
-</pre>where CASSANDRA_DIR is the path to the compiled Cassandra directory.
+
+```
+where CASSANDRA_DIR is the path to the compiled Cassandra directory.
 
 
-##Modules##
+## Modules ##
 
 
 <table width="100%" border="0" summary="list of modules">
-<tr><td><a href="https://github.com/iamaleksey/seestar/blob/ccm/doc/seestar.md" class="module">seestar</a></td></tr>
-<tr><td><a href="https://github.com/iamaleksey/seestar/blob/ccm/doc/seestar_cqltypes.md" class="module">seestar_cqltypes</a></td></tr>
-<tr><td><a href="https://github.com/iamaleksey/seestar/blob/ccm/doc/seestar_error.md" class="module">seestar_error</a></td></tr>
-<tr><td><a href="https://github.com/iamaleksey/seestar/blob/ccm/doc/seestar_event.md" class="module">seestar_event</a></td></tr>
-<tr><td><a href="https://github.com/iamaleksey/seestar/blob/ccm/doc/seestar_result.md" class="module">seestar_result</a></td></tr>
-<tr><td><a href="https://github.com/iamaleksey/seestar/blob/ccm/doc/seestar_session.md" class="module">seestar_session</a></td></tr></table>
+<tr><td><a href="https://github.com/iamaleksey/seestar/blob/master/doc/seestar.md" class="module">seestar</a></td></tr>
+<tr><td><a href="https://github.com/iamaleksey/seestar/blob/master/doc/seestar_cqltypes.md" class="module">seestar_cqltypes</a></td></tr>
+<tr><td><a href="https://github.com/iamaleksey/seestar/blob/master/doc/seestar_error.md" class="module">seestar_error</a></td></tr>
+<tr><td><a href="https://github.com/iamaleksey/seestar/blob/master/doc/seestar_event.md" class="module">seestar_event</a></td></tr>
+<tr><td><a href="https://github.com/iamaleksey/seestar/blob/master/doc/seestar_result.md" class="module">seestar_result</a></td></tr>
+<tr><td><a href="https://github.com/iamaleksey/seestar/blob/master/doc/seestar_session.md" class="module">seestar_session</a></td></tr></table>
 

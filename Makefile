@@ -1,4 +1,4 @@
-.PHONY: all compile clean doc check_plt build_plt clean_plt dialyze xref test
+.PHONY: all compile clean deps doc check_plt build_plt clean_plt dialyze xref test
 
 all: deps compile doc
 

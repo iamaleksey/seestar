@@ -1,29 +1,33 @@
 
 
-#The seestar application#
-
+# The seestar application #
 
 __Authors:__ Aleksey Yeschenko ([`aleksey@apache.org`](mailto:aleksey@apache.org)).
 
 Erlang client for Apache Cassandra binary protocol
 
-##Introduction##
 
+## Introduction ##
 
 
 <strong>seestar</strong>
  is the Erlang client for Cassandra 1.2+ binary protocol.
 
-##Tests##
 
+## Tests ##
 
 You'll need to install [ccm](https://github.com/pcmanus/ccm).
-To run the tests, execute:<pre>
+To run the tests, execute:
+
+```
+
 CASSANDRA_DIR=~/path/to/cassandra make test
-</pre>where CASSANDRA_DIR is the path to the compiled Cassandra directory.
+
+```
+where CASSANDRA_DIR is the path to the compiled Cassandra directory.
 
 
-##Modules##
+## Modules ##
 
 
 <table width="100%" border="0" summary="list of modules">
