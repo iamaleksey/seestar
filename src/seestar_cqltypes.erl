@@ -171,9 +171,10 @@ encode_value(int, Value) ->
 encode_value(timestamp, {MegaSeconds, Seconds, MicroSeconds}) ->
     <<((MegaSeconds * 1000000 + Seconds) * 1000 + MicroSeconds div 1000):64/signed>>;
 
+encode_value(varint, Value) when Value >= 0 ->
+    encode_varint_pos(Value, []);
 encode_value(varint, Value) ->
-    <<_Size:32, Bytes/binary>> = crypto:mpint(Value),
-    Bytes;
+    encode_varint_neg(Value, []);
 
 encode_value(inet, {O1, O2, O3, O4}) ->
     <<O1, O2, O3, O4>>;
@@ -193,6 +194,16 @@ encode_value({set, Type}, Set) ->
 encode_value(_Type, Value) ->
     % Don't perform any transformations on values of other types.
     Value.
+
+encode_varint_pos(0, Ds = [_|_]) ->
+    list_to_binary(Ds);
+encode_varint_pos(X, Ds) ->
+    encode_varint_pos(X bsr 8, [(X band 255)|Ds]).
+
+encode_varint_neg(-1, Ds=[MSB|_]) when MSB >= 16#80 ->
+    list_to_binary(Ds);
+encode_varint_neg(X, Ds) ->
+    encode_varint_neg(X bsr 8, [(X band 255)|Ds]).
 
 %% -------------------------------------------------------------------------
 %% encoding collections
