@@ -50,7 +50,9 @@
 -record(st,
         {host :: inet:hostname(),
          sock :: inet:socket(),
-         incomplete = <<>> :: binary(),
+         incomplete = <<>> :: binary() | [binary()],
+         frame_size = undefined :: integer() | undefined,
+         incomplete_size = 0 :: integer(),
          free_ids :: [seestar_frame:stream_id()],
          backlog = queue:new() :: queue(),
          reqs :: ets:tid()}).
@@ -268,9 +270,24 @@ handle_cast(Request, St) ->
 
 %% @private
 handle_info({tcp, Sock, Data}, #st{sock = Sock} = St) ->
-    Stream = <<(St#st.incomplete)/binary, Data/binary>>,
-    {Frames, Incomplete} = seestar_frame:decode(Stream),
-    {noreply, process_frames(Frames, St#st{incomplete = Incomplete})};
+    {Frames, St2} = case St#st.frame_size of
+        undefined ->
+            Stream = <<(St#st.incomplete)/binary, Data/binary>>,
+            {FramesI, Incomplete, FrameSize} = seestar_frame:decode(Stream),
+            {FramesI, St#st{incomplete = Incomplete, frame_size = FrameSize, incomplete_size = size(Incomplete)}};
+        _ ->
+            Stream = [Data, St#st.incomplete],
+            StreamSize = St#st.incomplete_size + size(Data),
+            case StreamSize >= St#st.frame_size of
+                true ->
+                    Stream2 = iolist_to_binary(Stream),
+                    {FramesI, Incomplete, FrameSize} = seestar_frame:decode(Stream2),
+                    {FramesI, St#st{incomplete = Incomplete, frame_size = FrameSize, incomplete_size = size(Incomplete)}};
+                false ->
+                    {[], St#st{incomplete = Stream, incomplete_size = StreamSize}}
+            end
+    end,
+    {noreply, process_frames(Frames, St2)};
 
 handle_info({tcp_closed, Sock}, #st{sock = Sock} = St) ->
     {stop, socket_closed, St};
