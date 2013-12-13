@@ -69,15 +69,16 @@ encode_flags(Flags) ->
 encode_flag(compression) -> ?COMPRESSION;
 encode_flag(tracing)     -> ?TRACING.
 
--spec decode(binary()) -> {[frame()], binary()}.
+-spec decode(binary()) -> {[frame()], binary(), integer() | undefined}.
 decode(Stream) ->
     decode(Stream, []).
-
 decode(<<16#81, Flags, ID/signed, Op, Size:32, Body:Size/binary, Rest/binary>>, Acc) ->
     Frame = #frame{id = ID, flags = decode_flags(Flags), opcode = Op, body = Body},
     decode(Rest, [Frame|Acc]);
+decode(<<16#81, _Flags, _ID/signed, _Op, Size:32, _Rest/binary>> = Stream, Acc) ->
+    {lists:reverse(Acc), Stream, Size + 8};
 decode(Stream, Acc) ->
-    {lists:reverse(Acc), Stream}.
+    {lists:reverse(Acc), Stream, undefined}.
 
 decode_flags(Byte) ->
     F = fun(Mask, Flags) when Byte band Mask =:= Mask ->
