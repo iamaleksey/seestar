@@ -50,9 +50,7 @@
 -record(st,
         {host :: inet:hostname(),
          sock :: inet:socket(),
-         incomplete = <<>> :: binary() | [binary()],
-         frame_size = undefined :: integer() | undefined,
-         incomplete_size = 0 :: integer(),
+         buffer :: seestar_buffer:buffer(),
          free_ids :: [seestar_frame:stream_id()],
          backlog = queue:new() :: queue(),
          reqs :: ets:tid()}).
@@ -221,8 +219,8 @@ init([Host, Port, ConnectOptions]) ->
     case gen_tcp:connect(Host, Port, SockOpts, Timeout) of
         {ok, Sock} ->
             ok = inet:setopts(Sock, [binary, {packet, 0}, {active, true}]),
-            {ok, #st{host = Host, sock = Sock, free_ids = lists:seq(0, 127),
-                     reqs = ets:new(seestar_reqs, [])}};
+            {ok, #st{host = Host, sock = Sock, buffer = seestar_buffer:new(),
+                     free_ids = lists:seq(0, 127), reqs = ets:new(seestar_reqs, [])}};
         {error, Reason} ->
             {stop, {connection_error, Reason}}
     end.
@@ -270,24 +268,8 @@ handle_cast(Request, St) ->
 
 %% @private
 handle_info({tcp, Sock, Data}, #st{sock = Sock} = St) ->
-    {Frames, St2} = case St#st.frame_size of
-        undefined ->
-            Stream = <<(St#st.incomplete)/binary, Data/binary>>,
-            {FramesI, Incomplete, FrameSize} = seestar_frame:decode(Stream),
-            {FramesI, St#st{incomplete = Incomplete, frame_size = FrameSize, incomplete_size = size(Incomplete)}};
-        _ ->
-            Stream = [Data, St#st.incomplete],
-            StreamSize = St#st.incomplete_size + size(Data),
-            case StreamSize >= St#st.frame_size of
-                true ->
-                    Stream2 = iolist_to_binary(Stream),
-                    {FramesI, Incomplete, FrameSize} = seestar_frame:decode(Stream2),
-                    {FramesI, St#st{incomplete = Incomplete, frame_size = FrameSize, incomplete_size = size(Incomplete)}};
-                false ->
-                    {[], St#st{incomplete = Stream, incomplete_size = StreamSize}}
-            end
-    end,
-    {noreply, process_frames(Frames, St2)};
+    {Frames, Buffer} = seestar_buffer:decode(St#st.buffer, Data),
+    {noreply, process_frames(Frames, St#st{buffer = Buffer})};
 
 handle_info({tcp_closed, Sock}, #st{sock = Sock} = St) ->
     {stop, socket_closed, St};

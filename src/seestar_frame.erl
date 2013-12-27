@@ -15,12 +15,13 @@
 %%% @private
 -module(seestar_frame).
 
--export([new/4, id/1, flags/1, has_flag/2, opcode/1, body/1, encode/1, decode/1]).
+-export([new/4, id/1, flags/1, has_flag/2, opcode/1,
+         body/1, encode/1, pending_size/1, decode/1]).
 
 -type stream_id() :: -1..127.
 -type flag() :: compression | tracing.
 -type opcode() :: 16#00..16#0C.
--export_type([stream_id/0, flag/0, opcode/0]).
+-export_type([stream_id/0, flag/0, opcode/0, frame/0]).
 
 -define(COMPRESSION, 16#01).
 -define(TRACING, 16#02).
@@ -29,7 +30,7 @@
                 flags = [] :: [flag()],
                 opcode :: opcode(),
                 body :: binary()}).
--type frame() :: #frame{}.
+-opaque frame() :: #frame{}.
 
 %% -------------------------------------------------------------------------
 %% API
@@ -69,16 +70,20 @@ encode_flags(Flags) ->
 encode_flag(compression) -> ?COMPRESSION;
 encode_flag(tracing)     -> ?TRACING.
 
--spec decode(binary()) -> {[frame()], binary(), integer() | undefined}.
+-spec pending_size(binary()) -> pos_integer().
+pending_size(<<16#81, _Flags, _ID/signed, _Op, Size:32, _/binary>>) ->
+    Size + 8;
+pending_size(_) ->
+    undefined.
+
+-spec decode(binary()) -> {[frame()], binary()}.
 decode(Stream) ->
     decode(Stream, []).
 decode(<<16#81, Flags, ID/signed, Op, Size:32, Body:Size/binary, Rest/binary>>, Acc) ->
     Frame = #frame{id = ID, flags = decode_flags(Flags), opcode = Op, body = Body},
     decode(Rest, [Frame|Acc]);
-decode(<<16#81, _Flags, _ID/signed, _Op, Size:32, _Rest/binary>> = Stream, Acc) ->
-    {lists:reverse(Acc), Stream, Size + 8};
 decode(Stream, Acc) ->
-    {lists:reverse(Acc), Stream, undefined}.
+    {lists:reverse(Acc), Stream}.
 
 decode_flags(Byte) ->
     F = fun(Mask, Flags) when Byte band Mask =:= Mask ->
