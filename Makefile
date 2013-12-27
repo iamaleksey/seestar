@@ -14,7 +14,7 @@ clean:
 doc:
 	@./rebar skip_deps=true doc
 
-APPS = asn1 compiler crypto edoc erts eunit gs hipe inets kernel mnesia \
+APPS = asn1 compiler crypto edoc erts gs hipe inets kernel mnesia \
 	public_key runtime_tools ssl stdlib syntax_tools xmerl
 PLT = .seestar_plt
 
