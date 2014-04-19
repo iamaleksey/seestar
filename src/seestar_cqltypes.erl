@@ -22,7 +22,7 @@
                   timeuuid | inet.
 -type decimal() :: {Unscaled :: integer(), Scale :: integer()}.
 -type value() :: null | integer() | binary() | boolean() | float() | inet:ip_address() |
-                 decimal() | list() | dict() | set().
+                 decimal() | list() | dict:dict() | sets:set().
 -export_type([type/0, value/0]).
 
 %% -------------------------------------------------------------------------
