@@ -17,6 +17,7 @@
 -behaviour(gen_server).
 
 -include("seestar_messages.hrl").
+-include("builtin_types.hrl").
 
 %% API exports.
 -export([start_link/2, start_link/3, start_link/4, stop/1]).
@@ -52,7 +53,7 @@
          sock :: inet:socket(),
          buffer :: seestar_buffer:buffer(),
          free_ids :: [seestar_frame:stream_id()],
-         backlog = queue:new() :: queue:queue(),
+         backlog = queue:new() :: queue_t(),
          reqs :: ets:tid()}).
 
 %% -------------------------------------------------------------------------
