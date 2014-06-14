@@ -14,6 +14,8 @@
 
 -module(seestar_cqltypes).
 
+-include("builtin_types.hrl").
+
 -export([decode_value_with_size/2, encode_value_with_size/2, decode_type/1]).
 
 -type type() :: native() | {list | set, native()} | {map, native(), native()} | {custom, string()}.
@@ -22,7 +24,7 @@
                   timeuuid | inet.
 -type decimal() :: {Unscaled :: integer(), Scale :: integer()}.
 -type value() :: null | integer() | binary() | boolean() | float() | inet:ip_address() |
-                 decimal() | list() | dict:dict() | sets:set().
+                 decimal() | list() | dict_t() | set_t().
 -export_type([type/0, value/0]).
 
 %% -------------------------------------------------------------------------
