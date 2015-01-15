@@ -50,7 +50,8 @@
 
 -record(st,
         {host :: inet:hostname(),
-         sock :: inet:socket(),
+         transport :: tcp | ssl,
+         sock :: inet:socket() | ssl:sslsocket(),
          buffer :: seestar_buffer:buffer(),
          free_ids :: [seestar_frame:stream_id()],
          backlog = queue:new() :: queue_t(),
@@ -216,15 +217,31 @@ request(Client, Request, Sync) ->
 %% @private
 init([Host, Port, ConnectOptions]) ->
     Timeout = proplists:get_value(connect_timeout, ConnectOptions, infinity),
-    SockOpts = proplists:delete(connect_timeout, ConnectOptions),
-    case gen_tcp:connect(Host, Port, SockOpts, Timeout) of
+    Ssl = proplists:get_value(ssl, ConnectOptions, false),
+    Transport = if
+                    Ssl -> ssl;
+                    true -> tcp
+                end,
+    SockOpts0 = proplists:delete(connect_timeout, ConnectOptions),
+    SockOpts = proplists:delete(ssl, SockOpts0),
+    case create_socket(Host, Port, Transport, SockOpts, Timeout) of
         {ok, Sock} ->
-            ok = inet:setopts(Sock, [binary, {packet, 0}, {active, true}]),
-            {ok, #st{host = Host, sock = Sock, buffer = seestar_buffer:new(),
+            ok = socket_setopts(Sock, Transport, [binary, {packet, 0}, {active, true}]),
+            {ok, #st{host = Host, sock = Sock, transport = Transport, buffer = seestar_buffer:new(),
                      free_ids = lists:seq(0, 127), reqs = ets:new(seestar_reqs, [])}};
         {error, Reason} ->
             {stop, {connection_error, Reason}}
     end.
+
+create_socket(Host, Port, ssl, SockOpts, Timeout) ->
+    ssl:connect(Host, Port, SockOpts, Timeout);
+create_socket(Host, Port, tcp, SockOpts, Timeout) ->
+    gen_tcp:connect(Host, Port, SockOpts, Timeout).
+
+socket_setopts(Sock, tcp, Options)->
+    inet:setopts(Sock, Options);
+socket_setopts(Sock, ssl, Options)->
+    ssl:setopts(Sock, Options).
 
 %% @private
 terminate(_Reason, _St) ->
@@ -248,10 +265,10 @@ handle_call({request, Op, Body, Sync}, {_Pid, Ref} = From, St) ->
 handle_call(Request, _From, St) ->
     {stop, {unexpected_call, Request}, St}.
 
-send_request(#req{op = Op, body = Body, from = From, sync = Sync}, St) ->
+send_request(#req{op = Op, body = Body, from = From, sync = Sync}, #st{sock = Sock, transport = Transport} = St) ->
     ID = hd(St#st.free_ids),
     Frame = seestar_frame:new(ID, [], Op, Body),
-    case gen_tcp:send(St#st.sock, seestar_frame:encode(Frame)) of
+    case send_on_wire(Sock, Transport, seestar_frame:encode(Frame)) of
         ok ->
             ets:insert(St#st.reqs, {ID, From, Sync}),
             {ok, St#st{free_ids = tl(St#st.free_ids)}};
@@ -259,23 +276,38 @@ send_request(#req{op = Op, body = Body, from = From, sync = Sync}, St) ->
             Error
     end.
 
+send_on_wire(Sock, tcp, Data) ->
+    gen_tcp:send(Sock, Data);
+send_on_wire(Sock, ssl, Data) ->
+    ssl:send(Sock, Data).
+
 %% @private
-handle_cast(stop, St) ->
-    gen_tcp:close(St#st.sock),
+handle_cast(stop, #st{sock = Sock, transport = tcp} = St) ->
+    gen_tcp:close(Sock),
+    {stop, normal, St};
+
+handle_cast(stop, #st{sock = Sock, transport = ssl} = St) ->
+    ssl:close(Sock),
     {stop, normal, St};
 
 handle_cast(Request, St) ->
     {stop, {unexpected_cast, Request}, St}.
 
 %% @private
-handle_info({tcp, Sock, Data}, #st{sock = Sock} = St) ->
+handle_info({Transport, Sock, Data}, #st{sock = Sock, transport = Transport} = St) ->
     {Frames, Buffer} = seestar_buffer:decode(St#st.buffer, Data),
     {noreply, process_frames(Frames, St#st{buffer = Buffer})};
 
-handle_info({tcp_closed, Sock}, #st{sock = Sock} = St) ->
+handle_info({tcp_closed, Sock}, #st{sock = Sock, transport = tcp} = St) ->
     {stop, socket_closed, St};
 
-handle_info({tcp_error, Sock, Reason}, #st{sock = Sock} = St) ->
+handle_info({tcp_error, Sock, Reason}, #st{sock = Sock, transport = tcp} = St) ->
+    {stop, {socket_error, Reason}, St};
+
+handle_info({ssl_closed, Sock}, #st{sock = Sock, transport = ssl} = St) ->
+    {stop, socket_closed, St};
+
+handle_info({ssl_error, Sock, Reason}, #st{sock = Sock, transport = ssl} = St) ->
     {stop, {socket_error, Reason}, St};
 
 handle_info(Info, St) ->
