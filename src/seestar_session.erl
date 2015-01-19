@@ -34,7 +34,8 @@
                        | {credentials, credentials()}
                        | {events, events()}.
 
--type connect_option() :: gen_tcp:connect_option() | {connect_timeout, timeout()}.
+-type connect_option() :: gen_tcp:connect_option() | ssl:connect_option()
+                        | {connect_timeout, timeout()} | {ssl, boolean()}.
 
 -type 'query'() :: binary() | string().
 -type query_id() :: binary().
@@ -73,8 +74,13 @@ start_link(Host, Port) ->
 start_link(Host, Port, ClientOptions) ->
     start_link(Host, Port, ClientOptions, []).
 
+%% @doc
+%% Starts a new connection to a cassandra node on Host:Port.
+%% By default it will connect on plain tcp. If you want to connect using ssl, pass
+%% {ssl, true} in the ConnectOptions
+%% @end
 -spec start_link(inet:hostname(), inet:port_number(), [client_option()], [connect_option()]) ->
-    any().
+    {ok, pid()} | {error, any()}.
 start_link(Host, Port, ClientOptions, ConnectOptions) ->
      case gen_server:start_link(?MODULE, [Host, Port, ConnectOptions], []) of
         {ok, Pid} ->
