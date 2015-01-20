@@ -34,8 +34,8 @@
                        | {credentials, credentials()}
                        | {events, events()}.
 
--type connect_option() :: gen_tcp:connect_option() | ssl:connect_option()
-                        | {connect_timeout, timeout()} | {ssl, boolean()}.
+-type connect_option() :: gen_tcp:connect_option() | {connect_timeout, timeout()}
+                         | {ssl, [ssl:connect_option()]}.
 
 -type 'query'() :: binary() | string().
 -type query_id() :: binary().
@@ -77,7 +77,7 @@ start_link(Host, Port, ClientOptions) ->
 %% @doc
 %% Starts a new connection to a cassandra node on Host:Port.
 %% By default it will connect on plain tcp. If you want to connect using ssl, pass
-%% {ssl, true} in the ConnectOptions
+%% {ssl, [ssl_option()]} in the ConnectOptions
 %% @end
 -spec start_link(inet:hostname(), inet:port_number(), [client_option()], [connect_option()]) ->
     {ok, pid()} | {error, any()}.
@@ -221,16 +221,10 @@ request(Client, Request, Sync) ->
 %% -------------------------------------------------------------------------
 
 %% @private
-init([Host, Port, ConnectOptions]) ->
-    Timeout = proplists:get_value(connect_timeout, ConnectOptions, infinity),
-    Ssl = proplists:get_value(ssl, ConnectOptions, false),
-    Transport = if
-                    Ssl -> ssl;
-                    true -> tcp
-                end,
-    SockOpts0 = proplists:delete(connect_timeout, ConnectOptions),
-    SockOpts = proplists:delete(ssl, SockOpts0),
-    case create_socket(Host, Port, Transport, SockOpts, Timeout) of
+init([Host, Port, ConnectOptions0]) ->
+    {Timeout, ConnectOptions1} = get_timeout(ConnectOptions0),
+    {Transport , ConnectOptions} = get_transport(ConnectOptions1),
+    case create_socket(Host, Port, Transport, ConnectOptions, Timeout) of
         {ok, Sock} ->
             ok = socket_setopts(Sock, Transport, [binary, {packet, 0}, {active, true}]),
             {ok, #st{host = Host, sock = Sock, transport = Transport, buffer = seestar_buffer:new(),
@@ -238,6 +232,28 @@ init([Host, Port, ConnectOptions]) ->
         {error, Reason} ->
             {stop, {connection_error, Reason}}
     end.
+
+%% @doc
+%% Extracts the protocol from the connect options. Returns a tuple where the first element
+%% is the transport, and the second is a proplist of the remaining options
+-spec get_transport([connect_option()]) -> {ssl|tcp, [connect_option()]}.
+get_transport(ConnectOptions0) ->
+    case proplists:get_value(ssl, ConnectOptions0) of
+        undefined ->
+            {tcp, ConnectOptions0};
+        SslOptions ->
+            NewConnectOptions = proplists:delete(ssl, ConnectOptions0) ++ SslOptions,
+            {ssl, NewConnectOptions}
+    end.
+
+%% @doc
+%% Extracts the timeout from the conenct options. Returns a tuple with the first element
+%% being the timeout, and the second a proplist of the remaining options
+-spec get_timeout([connect_option()]) -> {ssl|tcp, [connect_option()]}.
+get_timeout(ConnectOptions0) ->
+    Timeout = proplists:get_value(connect_timeout, ConnectOptions0, infinity),
+    NewConnectOptions = proplists:delete(connect_timeout, ConnectOptions0),
+    {Timeout, NewConnectOptions}.
 
 create_socket(Host, Port, ssl, SockOpts, Timeout) ->
     ssl:connect(Host, Port, SockOpts, Timeout);

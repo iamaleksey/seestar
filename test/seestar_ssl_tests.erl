@@ -25,7 +25,7 @@ ssl_test_() ->
 simple() ->
     Qry0 = "CREATE KEYSPACE seestar "
     "WITH REPLICATION = {'class': 'SimpleStrategy', 'replication_factor': 1}",
-    {ok, Pid} = seestar_session:start_link("localhost", 9042, [], [{ssl, true}]),
+    {ok, Pid} = seestar_session:start_link("localhost", 9042, [], [{ssl, []}]),
     unlink(Pid),
     {ok, Res0} = seestar_session:perform(Pid, Qry0, one),
     ?assertEqual(schema_change, seestar_result:type(Res0)),

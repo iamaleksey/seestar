@@ -31,7 +31,7 @@ client_option() = {keyspace, string() | binary()} | {credentials, <a href="#type
 
 
 <pre><code>
-connect_option() = <a href="gen_tcp.md#type-connect_option">gen_tcp:connect_option()</a> | <a href="ssl.md#type-connect_option">ssl:connect_option()</a> | {connect_timeout, timeout()} | {ssl, boolean()}
+connect_option() = <a href="gen_tcp.md#type-connect_option">gen_tcp:connect_option()</a> | {connect_timeout, timeout()} | {ssl, [<a href="ssl.md#type-connect_option">ssl:connect_option()</a>]}
 </code></pre>
 
 
@@ -190,7 +190,7 @@ start_link(Host::<a href="inet.md#type-hostname">inet:hostname()</a>, Port::<a h
 
 Starts a new connection to a cassandra node on Host:Port.
 By default it will connect on plain tcp. If you want to connect using ssl, pass
-{ssl, true} in the ConnectOptions
+{ssl, [ssl_option()]} in the ConnectOptions
 <a name="stop-1"></a>
 
 ### stop/1 ###
