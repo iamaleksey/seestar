@@ -31,7 +31,7 @@ client_option() = {keyspace, string() | binary()} | {credentials, <a href="#type
 
 
 <pre><code>
-connect_option() = <a href="gen_tcp.md#type-connect_option">gen_tcp:connect_option()</a> | {connect_timeout, timeout()}
+connect_option() = <a href="gen_tcp.md#type-connect_option">gen_tcp:connect_option()</a> | {connect_timeout, timeout()} | {ssl, [<a href="ssl.md#type-connect_option">ssl:connect_option()</a>]}
 </code></pre>
 
 
@@ -88,7 +88,8 @@ query_id() = binary()
 ## Function Index ##
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#execute-5">execute/5</a></td><td>Synchronously execute a prepared query using the specified consistency level.</td></tr><tr><td valign="top"><a href="#execute_async-5">execute_async/5</a></td><td></td></tr><tr><td valign="top"><a href="#perform-3">perform/3</a></td><td>Synchoronously perform a CQL query using the specified consistency level.</td></tr><tr><td valign="top"><a href="#perform_async-3">perform_async/3</a></td><td>Asynchronously perform a CQL query using the specified consistency level.</td></tr><tr><td valign="top"><a href="#prepare-2">prepare/2</a></td><td>Prepare a query for later execution.</td></tr><tr><td valign="top"><a href="#start_link-2">start_link/2</a></td><td>Equivalent to <a href="#start_link-3"><tt>start_link(Host, Post, [])</tt></a>.</td></tr><tr><td valign="top"><a href="#start_link-3">start_link/3</a></td><td>Equivalent to <a href="#start_link-4"><tt>start_link(Host, Post, ClientOptions, [])</tt></a>.</td></tr><tr><td valign="top"><a href="#start_link-4">start_link/4</a></td><td></td></tr><tr><td valign="top"><a href="#stop-1">stop/1</a></td><td>Stop the client.</td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#execute-5">execute/5</a></td><td>Synchronously execute a prepared query using the specified consistency level.</td></tr><tr><td valign="top"><a href="#execute_async-5">execute_async/5</a></td><td></td></tr><tr><td valign="top"><a href="#perform-3">perform/3</a></td><td>Synchoronously perform a CQL query using the specified consistency level.</td></tr><tr><td valign="top"><a href="#perform_async-3">perform_async/3</a></td><td>Asynchronously perform a CQL query using the specified consistency level.</td></tr><tr><td valign="top"><a href="#prepare-2">prepare/2</a></td><td>Prepare a query for later execution.</td></tr><tr><td valign="top"><a href="#start_link-2">start_link/2</a></td><td>Equivalent to <a href="#start_link-3"><tt>start_link(Host, Post, [])</tt></a>.</td></tr><tr><td valign="top"><a href="#start_link-3">start_link/3</a></td><td>Equivalent to <a href="#start_link-4"><tt>start_link(Host, Post, ClientOptions, [])</tt></a>.</td></tr><tr><td valign="top"><a href="#start_link-4">start_link/4</a></td><td>
+Starts a new connection to a cassandra node on Host:Port.</td></tr><tr><td valign="top"><a href="#stop-1">stop/1</a></td><td>Stop the client.</td></tr></table>
 
 
 <a name="functions"></a>
@@ -103,9 +104,7 @@ query_id() = binary()
 <pre><code>
 execute(Client::pid(), QueryID::<a href="#type-query_id">query_id()</a>, Types::[<a href="seestar_cqltypes.md#type-type">seestar_cqltypes:type()</a>], Values::[<a href="seestar_cqltypes.md#type-value">seestar_cqltypes:value()</a>], Consistency::<a href="seestar.md#type-consistency">seestar:consistency()</a>) -&gt; {ok, Result::<a href="seestar_result.md#type-result">seestar_result:result()</a>} | {error, Error::<a href="seestar_error.md#type-error">seestar_error:error()</a>}
 </code></pre>
-
-<br></br>
-
+<br />
 
 Synchronously execute a prepared query using the specified consistency level.
 Use [`seestar_result`](seestar_result.md) module functions to work with the result.
@@ -126,9 +125,7 @@ __See also:__ [perform/3](#perform-3), [prepare/2](#prepare-2).
 <pre><code>
 perform(Client::pid(), Query::<a href="#type-query">query()</a>, Consistency::<a href="seestar.md#type-consistency">seestar:consistency()</a>) -&gt; {ok, Result::<a href="seestar_result.md#type-result">seestar_result:result()</a>} | {error, Error::<a href="seestar_error.md#type-error">seestar_error:error()</a>}
 </code></pre>
-
-<br></br>
-
+<br />
 
 Synchoronously perform a CQL query using the specified consistency level.
 Returns a result of an appropriate type (void, rows, set_keyspace, schema_change).
@@ -141,9 +138,7 @@ Use [`seestar_result`](seestar_result.md) module functions to work with the resu
 <pre><code>
 perform_async(Client::pid(), Query::<a href="#type-query">query()</a>, Consistency::<a href="seestar.md#type-consistency">seestar:consistency()</a>) -&gt; ok
 </code></pre>
-
-<br></br>
-
+<br />
 
 Asynchronously perform a CQL query using the specified consistency level.
 <a name="prepare-2"></a>
@@ -154,9 +149,7 @@ Asynchronously perform a CQL query using the specified consistency level.
 <pre><code>
 prepare(Client::pid(), Query::<a href="#type-query">query()</a>) -&gt; {ok, Result::<a href="seestar_result.md#type-prepared_result">seestar_result:prepared_result()</a>} | {error, Error::<a href="seestar_error.md#type-error">seestar_error:error()</a>}
 </code></pre>
-
-<br></br>
-
+<br />
 
 Prepare a query for later execution. The response will contain the prepared
 query id and column metadata for all the variables (if any).
@@ -170,9 +163,7 @@ __See also:__ [execute/3](#execute-3), [execute/4](#execute-4).
 <pre><code>
 start_link(Host::<a href="inet.md#type-hostname">inet:hostname()</a>, Port::<a href="inet.md#type-port_number">inet:port_number()</a>) -&gt; any()
 </code></pre>
-
-<br></br>
-
+<br />
 
 Equivalent to [`start_link(Host, Post, [])`](#start_link-3).
 <a name="start_link-3"></a>
@@ -183,9 +174,7 @@ Equivalent to [`start_link(Host, Post, [])`](#start_link-3).
 <pre><code>
 start_link(Host::<a href="inet.md#type-hostname">inet:hostname()</a>, Port::<a href="inet.md#type-port_number">inet:port_number()</a>, ClientOptions::[<a href="#type-client_option">client_option()</a>]) -&gt; any()
 </code></pre>
-
-<br></br>
-
+<br />
 
 Equivalent to [`start_link(Host, Post, ClientOptions, [])`](#start_link-4).
 <a name="start_link-4"></a>
@@ -194,13 +183,14 @@ Equivalent to [`start_link(Host, Post, ClientOptions, [])`](#start_link-4).
 
 
 <pre><code>
-start_link(Host::<a href="inet.md#type-hostname">inet:hostname()</a>, Port::<a href="inet.md#type-port_number">inet:port_number()</a>, ClientOptions::[<a href="#type-client_option">client_option()</a>], ConnectOptions::[<a href="#type-connect_option">connect_option()</a>]) -&gt; any()
+start_link(Host::<a href="inet.md#type-hostname">inet:hostname()</a>, Port::<a href="inet.md#type-port_number">inet:port_number()</a>, ClientOptions::[<a href="#type-client_option">client_option()</a>], ConnectOptions::[<a href="#type-connect_option">connect_option()</a>]) -&gt; {ok, pid()} | {error, any()}
 </code></pre>
-
-<br></br>
-
+<br />
 
 
+Starts a new connection to a cassandra node on Host:Port.
+By default it will connect on plain tcp. If you want to connect using ssl, pass
+{ssl, [ssl_option()]} in the ConnectOptions
 <a name="stop-1"></a>
 
 ### stop/1 ###
@@ -209,9 +199,7 @@ start_link(Host::<a href="inet.md#type-hostname">inet:hostname()</a>, Port::<a h
 <pre><code>
 stop(Client::pid()) -&gt; ok
 </code></pre>
-
-<br></br>
-
+<br />
 
 Stop the client.
 Closes the socket and terminates the process normally.
