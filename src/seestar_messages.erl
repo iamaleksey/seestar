@@ -135,14 +135,11 @@ decode(?SUPPORTED, Body) ->
 
 decode(?EVENT, Body) ->
     {EventType, Rest} = seestar_types:decode_string(Body),
-    case EventType of
-        ?TOPOLOGY_CHANGE ->
-            decode_topology_change(Rest);
-        ?STATUS_CHANGE ->
-            decode_status_change(Rest);
-        ?SCHEMA_CHANGE ->
-            decode_schema_change(Rest)
-    end;
+    #event{event = case EventType of
+                       ?TOPOLOGY_CHANGE -> decode_topology_change(Rest);
+                       ?STATUS_CHANGE -> decode_status_change(Rest);
+                       ?SCHEMA_CHANGE -> decode_schema_change(Rest)
+                   end};
 
 decode(?RESULT, Body) ->
     {Kind, Rest} = seestar_types:decode_int(Body),
