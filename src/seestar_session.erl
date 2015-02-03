@@ -344,7 +344,10 @@ process_frames([Frame|Frames], St) ->
 process_frames([], St) ->
     process_backlog(St).
 
-handle_event(_Frame, St) ->
+handle_event(Frame, St) ->
+    Op = seestar_frame:opcode(Frame),
+    Body = seestar_frame:body(Frame),
+    io:format("Whooa. Event! Decoded:\n~p\n", [seestar_messages:decode(Op, Body)]),
     St.
 
 handle_response(Frame, St) ->

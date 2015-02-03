@@ -17,8 +17,9 @@
 
 -export([encode_short/1, encode_long_string/1, encode_string_list/1, encode_bytes/1,
          encode_short_bytes/1, encode_consistency/1, encode_string_map/1]).
--export([decode_int/1, decode_short/1, decode_string/1, decode_uuid/1, decode_bytes/1,
-         decode_short_bytes/1, decode_consistency/1, decode_string_multimap/1]).
+-export([decode_int/1, decode_short/1, decode_byte/1, decode_string/1, decode_uuid/1,
+         decode_bytes/1, decode_short_bytes/1, decode_consistency/1,
+         decode_string_multimap/1, decode_inet/1]).
 
 %% -------------------------------------------------------------------------
 %% encoding functions
@@ -78,6 +79,10 @@ decode_short(Data) ->
     <<Value:16, Rest/binary>> = Data,
     {Value, Rest}.
 
+decode_byte(Data) ->
+    <<Value:8, Rest/binary>> = Data,
+    {Value, Rest}.
+
 decode_string(Data) ->
     {Length, Rest} = decode_short(Data),
     split_binary(Rest, Length).
@@ -126,3 +131,20 @@ decode_string_multimap(Data, Count, Acc) ->
     {Key, Rest0} = decode_string(Data),
     {Values, Rest1} = decode_string_list(Rest0),
     decode_string_multimap(Rest1, Count - 1, [{Key, Values}|Acc]).
+
+decode_inet(Data) ->
+    {Size, Rest} = decode_byte(Data),
+    {AddrBytes, Rest2} = split_binary(Rest, Size),
+    {Port, Rest3} = decode_int(Rest2),
+    Addr = case Size of
+        4 ->
+            % ipv4 / inet
+            <<A:8, B:8, C:8, D:8>> = AddrBytes,
+            {A, B, C, D};
+        16 ->
+            % ipv6 / 'inet6'
+            <<A:16, B:16, C:16, D:16, E:16, F:16, G:16, H:16>> = AddrBytes,
+            {A, B, C, D, E, F, G, H}
+    end,
+    {{Addr, Port}, Rest3}.
+
