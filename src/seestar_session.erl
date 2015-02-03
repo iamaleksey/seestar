@@ -29,6 +29,7 @@
 -export([init/1, terminate/2, handle_call/3, handle_cast/2, handle_info/2,
          code_change/3]).
 
+-type host() :: string() | inet:ip_address().
 -type credentials() :: [{string() | binary(), string() | binary()}].
 -type events() :: [topology_change | status_change | schema_change].
 -type client_option() :: {keyspace, string() | binary()}
@@ -51,7 +52,7 @@
          sync = true :: boolean()}).
 
 -record(st,
-        {host :: inet:hostname(),
+        {host :: host(),
          transport :: tcp | ssl,
          sock :: inet:socket() | ssl:sslsocket(),
          buffer :: seestar_buffer:buffer(),
@@ -65,13 +66,13 @@
 %% -------------------------------------------------------------------------
 
 %% @equiv start_link(Host, Post, [])
--spec start_link(inet:hostname(), inet:port_number()) ->
+-spec start_link(host(), inet:port_number()) ->
     any().
 start_link(Host, Port) ->
     start_link(Host, Port, []).
 
 %% @equiv start_link(Host, Post, ClientOptions, [])
--spec start_link(inet:hostname(), inet:port_number(), [client_option()]) ->
+-spec start_link(host(), inet:port_number(), [client_option()]) ->
     any().
 start_link(Host, Port, ClientOptions) ->
     start_link(Host, Port, ClientOptions, []).
@@ -81,7 +82,7 @@ start_link(Host, Port, ClientOptions) ->
 %% By default it will connect on plain tcp. If you want to connect using ssl, pass
 %% {ssl, [ssl_option()]} in the ConnectOptions
 %% @end
--spec start_link(inet:hostname(), inet:port_number(), [client_option()], [connect_option()]) ->
+-spec start_link(host(), inet:port_number(), [client_option()], [connect_option()]) ->
     {ok, pid()} | {error, any()}.
 start_link(Host, Port, ClientOptions, ConnectOptions) ->
      case gen_server:start_link(?MODULE, [Host, Port, ConnectOptions], []) of
