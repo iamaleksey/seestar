@@ -139,12 +139,12 @@ decode_inet(Data) ->
     Addr = case Size of
         4 ->
             % ipv4 / inet
-            <<A:8, B:8, C:8, D:8>> = AddrBytes,
-            {A, B, C, D};
+            <<N1:8, N2:8, N3:8, N4:8>> = AddrBytes,
+            {N1, N2, N3, N4};
         16 ->
             % ipv6 / 'inet6'
-            <<A:16, B:16, C:16, D:16, E:16, F:16, G:16, H:16>> = AddrBytes,
-            {A, B, C, D, E, F, G, H}
+            <<K1:16, K2:16, K3:16, K4:16, K5:16, K6:16, K7:16, K8:16>> = AddrBytes,
+            {K1, K2, K3, K4, K5, K6, K7, K8}
     end,
     {{Addr, Port}, Rest3}.
 
